@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACA GROUPE - Suivie des véhicules</title>
+<style>
+body{font-family:Arial;margin:0;background:#f2f2f2}
+header{background:#0a7a42;color:white;padding:20px;text-align:center}
+.container{padding:15px}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:12px}
+.badge{padding:4px 10px;border-radius:20px;color:white}
+.vert{background:#0a7a42}.orange{background:#e67e22}.rouge{background:#c0392b}
+input{width:100%;padding:12px;margin:8px 0;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+button{width:100%;padding:12px;background:#0a7a42;color:white;border:0;border-radius:8px;font-size:16px}
+</style>
+</head>
+<body>
+<header><h1>ACA GROUPE</h1><p>Suivie des véhicules</p></header>
+<div class="container">
+<input id="recherche" placeholder="Rechercher plaque..." oninput="filtrer()">
+<div id="liste"></div>
+<h3>Ajouter un véhicule</h3>
+<input id="marque" placeholder="Ex: TOYOTA">
+<input id="plaque" placeholder="Ex: TG 1234 AB">
+<input id="chauffeur" placeholder="Chauffeur">
+<input id="statut" placeholder="Statut: En service / En panne / En mission">
+<button onclick="ajouter()">Ajouter véhicule</button>
+</div>
+<script>
+let vehicules=[
+{marque:"ISUZU",plaque:"TG 0574 BR",chauffeur:"-",statut:"En service"},
+{marque:"TOYOTA",plaque:"TG 3137 BF",chauffeur:"-",statut:"En service"},
+{marque:"HYUNDAI",plaque:"TG 5342 BR",chauffeur:"-",statut:"En service"},
+{marque:"TOYOTA",plaque:"TG 3155 BR",chauffeur:"-",statut:"En service"},
+];
+let sauve=localStorage.getItem("aca");
+if(sauve) vehicules=JSON.parse(sauve);
+function afficher(liste){
+document.getElementById("liste").innerHTML=liste.map(v=>{
+let c=v.statut.includes("panne")?"rouge":v.statut.includes("mission")?"orange":"vert";
+return `<div class="card"><b>${v.marque} - ${v.plaque}</b><br>Chauffeur: ${v.chauffeur}<br><br><span class="badge ${c}">${v.statut}</span></div>`
+}).join("");
+}
+function filtrer(){
+let q=document.getElementById("recherche").value.toLowerCase();
+afficher(vehicules.filter(v=>(v.marque+v.plaque+v.chauffeur).toLowerCase().includes(q)));
+}
+function ajouter(){
+let m=document.getElementById("marque").value;
+let p=document.getElementById("plaque").value;
+let ch=document.getElementById("chauffeur").value||"-";
+let s=document.getElementById("statut").value||"En service";
+if(!m||!p){alert("Mets marque et plaque");return}
+vehicules.push({marque:m,plaque:p,chauffeur:ch,statut:s});
+localStorage.setItem("aca",JSON.stringify(vehicules));
+afficher(vehicules); alert("Ajouté !");
+}
+afficher(vehicules);
+</script>
+</body>
+</html>
